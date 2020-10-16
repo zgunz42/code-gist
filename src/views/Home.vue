@@ -1,25 +1,44 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" @click="login" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div cols="12" class="home">
+    <v-row justify="space-between" align="center" class="m-12 p-4">
+      <v-col class="header">
+        <h3 class="font-weight-light text-uppercase overline">
+          DOCUMENT NAME
+        </h3>
+        <p class="font-weight-regular subtitle-1">Untitled Document.md</p>
+      </v-col>
+      <v-col cols="auto" class="actions">
+        <v-container>
+          <v-row>
+            <v-col><v-btn color="primary">Unduh</v-btn></v-col>
+            <v-col><v-btn color="primary" @click="login">Simpan</v-btn></v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+    <app-editor-kode />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, InjectReactive, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
-import AuthPromp from '@/modules/auth/AuthPromp.vue';
+import { authSym } from '@/layouts/PageLayout.vue';
+import { defineComponent, inject } from '@vue/composition-api';
 
-@Component({
+export default defineComponent({
   components: {
-    HelloWorld,
+    AppEditorKode: () => import('@/components/partial/AppEditorKode.vue'),
   },
-})
-export default class Home extends Vue {
-  @InjectReactive('authPromp') authPromp!: AuthPromp;
-  login() {
-    this.authPromp?.tampil();
-    console.log(this.authPromp);
-  }
-}
+  setup() {
+    const authPromp = inject<any>(authSym);
+    const login = () => authPromp.value?.tampil();
+
+    return { login };
+  },
+});
 </script>
+<style lang="scss">
+.home {
+  width: 100%;
+  height: 100%;
+}
+</style>

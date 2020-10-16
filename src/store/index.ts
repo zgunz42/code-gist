@@ -8,7 +8,6 @@ import proses from './proses';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
   modules: {
     kode,
     notifikasi,

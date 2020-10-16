@@ -1,18 +1,14 @@
 import { ActionTree, MutationTree } from 'vuex';
+import { NotifikasiState } from './types';
 
-type State = {
-  apakahTampil: boolean;
-  pesan: string | null;
-};
-
-function state(): State {
+function state(): NotifikasiState {
   return {
     apakahTampil: false,
     pesan: null,
   };
 }
 
-const mutations: MutationTree<State> = {
+const mutations: MutationTree<NotifikasiState> = {
   aturNotifikasi(state, { apakahTampil, pesan }) {
     state.apakahTampil = apakahTampil;
     state.pesan = pesan;
@@ -23,7 +19,7 @@ const mutations: MutationTree<State> = {
   },
 };
 
-const actions: ActionTree<State, object> = {
+const actions: ActionTree<NotifikasiState, object> = {
   tampilkanNotifikasi({ commit }, { apakahTampil, pesan }) {
     commit('aturNotifikasi', {
       apakahTampil,

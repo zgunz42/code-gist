@@ -1,20 +1,16 @@
-import { ActionTree, MutationTree } from 'vuex';
+import { ActionTree, GetterTree, MutationTree } from 'vuex';
 import { DAFTAR_NOTIF, MASUK_NOTIF, URL_API } from '../constants';
-import { kirimData } from '../utils';
+import { kirimData } from '@/utils';
+import { PenggunaState, RootState } from './types';
 
-type State = {
-  idPengguna: number | null;
-  namaPengguna: string | null;
-};
-
-function state(): State {
+function state(): PenggunaState {
   return {
     idPengguna: null,
     namaPengguna: null,
   };
 }
 
-const mutations: MutationTree<State> = {
+const mutations: MutationTree<PenggunaState> = {
   aturDataPengguna(state, { idPengguna, namaPengguna }) {
     state.idPengguna = idPengguna;
     state.namaPengguna = namaPengguna;
@@ -25,7 +21,7 @@ const mutations: MutationTree<State> = {
   },
 };
 
-const actions: ActionTree<State, object> = {
+const actions: ActionTree<PenggunaState, object> = {
   async masuk({ commit, dispatch }, { namaPengguna }) {
     try {
       dispatch('proses/tampilkanProses', null, { root: true });
@@ -111,9 +107,16 @@ const actions: ActionTree<State, object> = {
   },
 };
 
+const getters: GetterTree<PenggunaState, RootState> = {
+  isLogin(s) {
+    return s.idPengguna !== null;
+  },
+};
+
 export default {
   namespaced: true,
   state,
   mutations,
   actions,
+  getters,
 };

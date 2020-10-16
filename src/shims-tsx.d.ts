@@ -1,6 +1,8 @@
 import Vue, { VNode } from 'vue';
+import VueNotification from 'vue-notification';
 import { Route, RawLocation } from 'vue-router';
 import { AuthPropInt } from './modules/auth/types';
+import { SetupContext } from '@vue/composition-api';
 
 declare global {
   namespace JSX {
@@ -14,6 +16,11 @@ declare global {
   }
 }
 
+declare module '@vue/composition-api' {
+  interface SetupContext {
+    refs: any;
+  }
+}
 declare module 'vue/types/vue' {
   // Augment component instance type
   interface Vue {

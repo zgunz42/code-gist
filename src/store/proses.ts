@@ -1,22 +1,19 @@
 import { ActionTree, MutationTree } from 'vuex';
+import { ProsesState } from './types';
 
-type State = {
-  apakahProsesTampil: boolean;
-};
-
-function state(): State {
+function state(): ProsesState {
   return {
     apakahProsesTampil: false,
   };
 }
 
-const mutations: MutationTree<State> = {
+const mutations: MutationTree<ProsesState> = {
   aturProsesTampil(state, { apakahProsesTampil }) {
     state.apakahProsesTampil = apakahProsesTampil;
   },
 };
 
-const actions: ActionTree<State, object> = {
+const actions: ActionTree<ProsesState, object> = {
   tampilkanProses({ commit }) {
     commit('aturProsesTampil', {
       apakahProsesTampil: true,

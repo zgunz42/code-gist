@@ -1,11 +1,8 @@
 import { ActionTree, MutationTree } from 'vuex';
 import { stringifyUrl } from 'query-string';
-import { kirimData } from '../utils';
+import { kirimData } from '@/utils';
 import { URL_API, OPSI_STRINGIFY } from '../constants';
-
-type State = {
-  daftarKode: object[];
-};
+import { KodeState } from './types';
 
 function state() {
   return {
@@ -13,7 +10,7 @@ function state() {
   };
 }
 
-const mutations: MutationTree<State> = {
+const mutations: MutationTree<KodeState> = {
   aturDaftarKode(state, { daftarKode }: { daftarKode: object[] }) {
     state.daftarKode = daftarKode;
   },
@@ -22,7 +19,7 @@ const mutations: MutationTree<State> = {
   },
 };
 
-const actions: ActionTree<State, object> = {
+const actions: ActionTree<KodeState, object> = {
   async dapatkanSemuaKode({ commit, dispatch }, { idPengguna, filter }) {
     try {
       dispatch('proses/tampilkanProses', null, { root: true });
