@@ -16,7 +16,7 @@
         </v-container>
       </v-col>
     </v-row>
-    <app-editor-kode />
+    <app-editor />
   </div>
 </template>
 
@@ -26,7 +26,7 @@ import { defineComponent, inject } from '@vue/composition-api';
 
 export default defineComponent({
   components: {
-    AppEditorKode: () => import('@/components/partial/AppEditorKode.vue'),
+    AppEditor: () => import('@/components/partial/AppEditor.vue'),
   },
   setup() {
     const authPromp = inject<any>(authSym);

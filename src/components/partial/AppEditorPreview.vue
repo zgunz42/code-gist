@@ -1,6 +1,6 @@
 <template>
   <section class="editor-kode flex fill-height">
-    <app-kode
+    <gl-kode
       :kode="hasilHighlight"
       :bahasa-pemrograman="bahasaPemrogramanTerpilih"
       class="tampilan-kode--kustom fill-height"
@@ -14,9 +14,6 @@ import { defineComponent } from '@vue/composition-api';
 import { validator } from '@/utils';
 
 export default defineComponent({
-  components: {
-    AppKode: () => import('@/components/AppKode.vue'),
-  },
   props: {
     inputKode: {
       default: '',

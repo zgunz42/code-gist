@@ -15,7 +15,7 @@ const requireComponent = require.context(
   // The relative path of the components folder
   './components/global',
   // Whether or not to look in subfolders
-  false,
+  true,
   // The regular expression used to match base component filenames
   /Gl[A-Z]\w+\.vue$/
 );

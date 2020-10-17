@@ -1,6 +1,6 @@
 <template>
   <div class="tampilan-kode">
-    <data-code
+    <gl-data-code
       :code="kode"
       :lang="bahasaPemrograman"
       :is-highlighted="apakahHighlightMenyala"

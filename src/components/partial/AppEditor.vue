@@ -2,18 +2,18 @@
   <div class="editor-code">
     <v-card>
       <v-row no-gutters class="fill-height">
-        <v-col class="editor-code-container">
+        <v-col class="editor-code-container editor">
           <div class="header">
             <h3 class="font-weight-light text-uppercase overline">
               JAVASCRIPT
             </h3>
           </div>
-          <div class="body">
-            <app-editor-kode />
+          <div class="body editor">
+            <app-editor-kode v-model="inputKode" />
           </div>
         </v-col>
         <v-col class="editor-code-container">
-          <div class="body fill-height">
+          <div class="body fill-height pt-0">
             <app-editor-preview
               :inputKode="inputKode"
               :bahasaPemrogramanTerpilih="bahasaPemrogramanTerpilih"
@@ -30,7 +30,16 @@ import { stringifyUrl } from 'query-string';
 import debounce from 'debounce-fn';
 import { URL_API, OPSI_STRINGIFY } from '@/constants';
 import { kirimData } from '@/utils';
-import { defineComponent, reactive, toRefs, watch } from '@vue/composition-api';
+import {
+  defineComponent,
+  reactive,
+  toRef,
+  onBeforeMount,
+  toRefs,
+  watch,
+  onMounted,
+} from '@vue/composition-api';
+import getOptions from '@/compositions/getOptions';
 
 type State = {
   inputKode: string;
@@ -49,11 +58,19 @@ export default defineComponent({
   setup(_, { root: { $store } }) {
     const state = reactive<State>({
       inputKode: '',
-      bahasaPemrogramanTerpilih: undefined,
+      bahasaPemrogramanTerpilih: 'javascript',
       namaBerkas: undefined,
       highlight: undefined,
       twoslashTerpilih: undefined,
       hasilHighlight: undefined,
+    });
+
+    const { load, daftarBahasaPemrograman, daftarTwoslash } = getOptions();
+
+    onMounted(() => {
+      load().catch(function(dataNotifikasiGalat) {
+        $store.dispatch('notifikasi/tampilkanNotifikasi', dataNotifikasiGalat);
+      });
     });
 
     async function highlighter(inputKode: string, download?: boolean) {
@@ -93,32 +110,30 @@ export default defineComponent({
     }
 
     watch(
-      () => state.inputKode,
-      kode => {
-        debounce(
-          () => {
-            state.hasilHighlight = '';
-            highlighter(kode);
-          },
-          { wait: 3000 }
-        );
-      }
+      toRef(state, 'inputKode'),
+      debounce(
+        kode => {
+          state.hasilHighlight = '';
+          highlighter(kode);
+        },
+        { wait: 300 }
+      )
     );
 
     return {
       ...toRefs(state),
+      daftarBahasaPemrograman,
+      daftarTwoslash,
     };
   },
 });
 </script>
 <style lang="scss">
 .editor-code {
-  .v-card {
-    overflow: hidden;
-    max-height: calc(100vh - 191px);
-  }
   &-container {
     position: relative;
+    overflow: hidden;
+    height: calc(100vh - 190px);
     .header,
     .body {
       display: flex;
@@ -127,14 +142,15 @@ export default defineComponent({
     }
     .header {
       min-height: 50px;
-      position: absolute;
-      top: 0;
-      left: 0;
     }
     .body {
       padding: 0;
-      padding-top: 50px;
       border-top: none;
+      // overflow-y: scroll;
+      &.editor {
+        overflow: hidden;
+        height: calc(100% - 50px);
+      }
     }
     .data-code {
       background: #000;

@@ -4,7 +4,10 @@
     <v-toolbar-title>Title</v-toolbar-title>
     <v-spacer></v-spacer>
     <div class="mx-2">
-      <app-bar-menu name="Today" :items="['Monday']" />
+      <app-bar-menu
+        name="Bucket"
+        :items="[{ link: '/', label: 'Javascript' }]"
+      />
     </div>
     <v-btn icon @click="$emit('click-settings')">
       <v-icon>mdi-cog</v-icon>

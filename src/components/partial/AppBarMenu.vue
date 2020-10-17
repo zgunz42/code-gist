@@ -5,9 +5,9 @@
         @click="show = !show"
         class="menu-item menu-item--save-to has-dropdown"
         :class="{
-          show: show,
+          open: show,
         }"
-        dropdown=""
+        v-click-outside="() => (show = false)"
       >
         <a
           class="dropdown-toggle"
