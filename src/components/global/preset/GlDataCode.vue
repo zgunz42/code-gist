@@ -10,8 +10,11 @@ import {
   computed,
   ComputedRef,
   defineComponent,
+  inject,
+  onMounted,
   Ref,
   ref,
+  watchEffect,
 } from '@vue/composition-api';
 import { VNode } from 'vue/types/umd';
 type CreateElement = (createElement: any) => VNode;
@@ -37,19 +40,44 @@ export default defineComponent<any, Raw>({
       required: true,
     },
   },
-  setup(props) {
+  setup(props, { refs }) {
     const templateRender = ref<CreateElement>();
+    const scroll: any = inject('scroll');
     const whichCode = computed(() => {
       if (!boolean(props.isHighlighted)) {
-        return `<pre class="data-code fill-height shiki-unparsed">${
+        return `<pre ref="codeView" class="data-code fill-height shiki-unparsed">${
           props.lang === 'html' ? htmlEscape(props.code) : props.code
         }</pre>`;
       }
-      return `<div class="data-code fill-height">${props.code}</div>`;
+      return `<div ref="codeView" class="data-code fill-height">${props.code}</div>`;
     });
-    return { templateRender, whichCode };
+    return { templateRender, whichCode, ...scroll };
   },
   watch: {
+    scrollX: {
+      handler: function(percX) {
+        const target: any = this.$refs.codeView;
+        const scorller = target?.children[0];
+
+        if (scorller) {
+          const totalX = scorller.scrollWidth - scorller.clientWidth;
+          const totalPercX = totalX ? (percX * totalX) / 100 : 0;
+          scorller.scrollLeft = totalPercX;
+        }
+      },
+    },
+    scrollY: {
+      handler: function(percY) {
+        const target: any = this.$refs.codeView;
+        const scorller = target?.children[0];
+
+        if (scorller) {
+          const totalY = scorller.scrollHeight - scorller.clientHeight;
+          const totalPercY = totalY ? (percY * totalY) / 100 : 0;
+          scorller.scrollTop = totalPercY;
+        }
+      },
+    },
     whichCode: {
       immediate: true,
       handler: function(code) {

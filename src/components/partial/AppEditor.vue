@@ -9,7 +9,7 @@
             </h3>
           </div>
           <div class="body editor">
-            <app-editor-kode v-model="inputKode" />
+            <app-editor-kode v-model="inputKode" @mark="putMark" />
           </div>
         </v-col>
         <v-col class="editor-code-container">
@@ -34,10 +34,11 @@ import {
   defineComponent,
   reactive,
   toRef,
-  onBeforeMount,
   toRefs,
   watch,
   onMounted,
+  ref,
+  provide,
 } from '@vue/composition-api';
 import getOptions from '@/compositions/getOptions';
 
@@ -56,6 +57,9 @@ export default defineComponent({
     AppEditorPreview: () => import('@/components/partial/AppEditorPreview.vue'),
   },
   setup(_, { root: { $store } }) {
+    const scrollX = ref(0);
+    const scrollY = ref(0);
+    provide('scroll', { scrollX, scrollY });
     const state = reactive<State>({
       inputKode: '',
       bahasaPemrogramanTerpilih: 'javascript',
@@ -109,11 +113,18 @@ export default defineComponent({
       }
     }
 
+    function putMark(marks: number[]) {
+      if (state.inputKode) {
+        state.highlight = marks.join(',');
+        highlighter(state.inputKode);
+      }
+    }
+
     watch(
       toRef(state, 'inputKode'),
       debounce(
         kode => {
-          state.hasilHighlight = '';
+          // state.hasilHighlight = '';
           highlighter(kode);
         },
         { wait: 300 }
@@ -124,6 +135,7 @@ export default defineComponent({
       ...toRefs(state),
       daftarBahasaPemrograman,
       daftarTwoslash,
+      putMark,
     };
   },
 });

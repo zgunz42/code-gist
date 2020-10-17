@@ -1,12 +1,21 @@
 <template>
   <div class="wrapper">
     <div ref="wrapper" class="tln-wrapper">
-      <span v-for="(line, index) in lines" :key="index" class="tln-line"></span>
+      <span
+        v-for="(line, index) in lines"
+        :key="index"
+        @click="toggleSelect(line)"
+        :class="{
+          selected: selected.includes(line),
+        }"
+        class="tln-line"
+      ></span>
     </div>
     <textarea
       ref="area"
       class="tln-active"
       :value="kode"
+      @scroll="fetchScroll"
       @input="ev => $emit('input', ev.target.value)"
     ></textarea>
   </div>
@@ -14,9 +23,11 @@
 <script lang="ts">
 import {
   defineComponent,
+  inject,
   onMounted,
   onUnmounted,
   ref,
+  watch,
 } from '@vue/composition-api';
 
 export default defineComponent({
@@ -24,9 +35,20 @@ export default defineComponent({
     prop: 'kode',
     event: 'input',
   },
-  setup(_, { refs }) {
+  setup(_, { refs, emit }) {
     const eventList: any = {};
     const lines = ref<number[]>([]);
+    const selected = ref<number[]>([]);
+
+    watch(selected, () => emit('mark', selected.value));
+
+    function toggleSelect(line: number) {
+      if (selected.value.includes(line)) {
+        selected.value.splice(selected.value.indexOf(line), 1);
+      } else {
+        selected.value.push(line);
+      }
+    }
 
     function updateLineNumbers(ta: any) {
       // Let's check if there are more or less lines than before
@@ -44,7 +66,7 @@ export default defineComponent({
           // const lineNumber = document.createElement('span');
           // lineNumber.className = 'tln-line';
           // frag.appendChild(lineNumber);
-          lines.value.push(lines.value.length);
+          lines.value.push(lines.value.length + 1);
           difference--;
         }
         // Append fragment (with <span> children) to our wrapper element
@@ -62,7 +84,6 @@ export default defineComponent({
       // Get reference to desired <textarea>
       const ta = refs.area;
       const id = 1;
-      console.log(refs.area);
 
       // If getting reference to element fails, warn and leave
       if (ta == null) {
@@ -186,8 +207,18 @@ export default defineComponent({
 
     onMounted(() => appendLineNumbers());
     onUnmounted(() => removeLineNumbers());
+    const data = inject<any>('scroll');
+    function fetchScroll(ev: any) {
+      const target = ev.target;
+      const totalY = target.scrollHeight - target.clientHeight;
+      const totalPercY = totalY ? (target.scrollTop / totalY) * 100 : 0;
+      const totalX = target.scrollWidth - target.clientWidth;
+      const totalPercX = totalX ? (target.scrollLeft / totalX) * 100 : 0;
 
-    return { lines };
+      data.scrollX.value = totalPercX;
+      data.scrollY.value = totalPercY;
+    }
+    return { lines, toggleSelect, selected, fetchScroll };
   },
   props: {
     kode: { type: String, required: true },
@@ -229,7 +260,7 @@ $line-width: 2.5em;
 }
 .tln-wrapper {
   width: $line-width;
-  padding: 0.6875em 0.3125em 2.1875em;
+  // padding: 0.6875em 0.3125em 2.1875em;
   height: 100%;
   word-break: break-all;
   overflow: hidden;
@@ -238,6 +269,7 @@ $line-width: 2.5em;
   background: #f5f7fa;
   color: #a0aabf;
   overflow: hidden;
+  padding: 0 0 2.1875em;
   border-right: 1px solid #d3daea;
 }
 .tln-line {
@@ -247,7 +279,16 @@ $line-width: 2.5em;
   line-height: 1.5;
   font-size: 1em;
   color: #aeaeae;
+  padding: 0 0.3125em 0;
   vertical-align: top;
+
+  &:first-child:not(:last-child) {
+    padding: 0.6875em 0.3125em 0;
+  }
+  &.selected {
+    background-color: #aeaeae;
+    color: #686868;
+  }
 }
 .tln-line::before {
   counter-increment: line;
