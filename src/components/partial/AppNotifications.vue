@@ -4,11 +4,12 @@
       v-for="(alert, index) in displayAlert"
       :key="index"
       text
-      dense
-      color="info"
+      colored-border
+      type="info"
+      elevation="2"
       border="left"
+      class="white"
       icon="mdi-clock-fast"
-      transition="slide-x-transition"
     >
       {{ alert }}
     </v-alert>
@@ -25,11 +26,11 @@ import {
 const MAX_COUNT = 3;
 
 export default defineComponent({
-  setup(_, { root: { $store } }) {
+  setup(_, { root }) {
     const alerts = ref<any>([]);
     const hidden = ref(false);
 
-    const hentikan = $store.subscribe(({ type, payload }, state) => {
+    const hentikan = root.$store.subscribe(({ type, payload }, state) => {
       if (type.startsWith('notifikasi')) {
         //do your stuff here
         if (type.endsWith('aturNotifikasi')) {
@@ -43,10 +44,10 @@ export default defineComponent({
     });
 
     const displayAlert = computed(() => {
-      return alerts.value.slice(0, MAX_COUNT);
+      return hidden.value ? [] : alerts.value.slice(0, MAX_COUNT);
     });
     const disable = () => (hidden.value = true);
-    const enable = () => (hidden.value = true);
+    const enable = () => (hidden.value = false);
 
     onUnmounted(() => {
       hentikan();

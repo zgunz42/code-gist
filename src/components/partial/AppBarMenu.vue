@@ -1,40 +1,44 @@
 <template>
-  <div class="nav-right">
-    <ul class="menu menu-utilities">
-      <li
-        @click="show = !show"
-        class="menu-item menu-item--save-to has-dropdown"
-        :class="{
-          open: show,
-        }"
-        v-click-outside="() => (show = false)"
-      >
-        <a
-          class="dropdown-toggle"
-          dropdown-toggle=""
-          aria-haspopup="true"
-          aria-expanded="false"
-          ><span>{{ name }}</span>
-          <v-icon color="#a0aabf">mdi-menu-down</v-icon></a
-        >
-        <ul class="dropdown dropdown-menu" role="menu">
-          <li v-for="(it, index) in items" :key="index" class="ng-scope">
-            <a :href="it.link" class="text-decoration-none">
-              <span class="body-2">{{ it.label }}</span>
-            </a>
-          </li>
-        </ul>
+  <div
+    @click="show = !show"
+    class="menu-item menu-item--save-to"
+    :class="{
+      open: show,
+      'has-dropdown': hasItems,
+    }"
+    v-click-outside="() => (show = false)"
+  >
+    <a
+      class="dropdown-toggle"
+      dropdown-toggle=""
+      aria-haspopup="true"
+      aria-expanded="false"
+      ><span>{{ name }}</span>
+      <v-icon v-if="hasItems" color="#a0aabf">mdi-menu-down</v-icon></a
+    >
+    <ul v-if="hasItems" class="dropdown dropdown-menu" role="menu">
+      <li v-for="(it, index) in items" :key="index" class="ng-scope">
+        <a :href="it.link" class="text-decoration-none">
+          <span class="body-2">{{ it.label }}</span>
+        </a>
       </li>
     </ul>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { computed, defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
   props: {
     name: { type: String, required: true },
-    items: { type: Array, deafult: () => [] },
+    items: { type: Array, required: false, deafult: () => [] },
+  },
+  setup(props) {
+    const hasItems = computed(() => {
+      return props.items && props.items.length > 0;
+    });
+
+    return { hasItems };
   },
   data() {
     return {
@@ -48,6 +52,7 @@ export default defineComponent({
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
 
   .menu-item {
     border: 0;
@@ -63,7 +68,7 @@ export default defineComponent({
       height: 51px;
       letter-spacing: 1px;
       line-height: 51px;
-      padding: 0 24px;
+      padding: 0 8px;
     }
 
     &.open > a {

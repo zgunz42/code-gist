@@ -1,10 +1,6 @@
 <template>
   <v-app>
-    <app-bar
-      @click-nav="drawer = !drawer"
-      @click-settings="settings = !settings"
-    />
-    <app-sidebar v-model="drawer" />
+    <app-bar />
     <v-main>
       <v-sheet style="position: relative;">
         <v-container fluid class="fill-height">
@@ -26,19 +22,11 @@ export const authSym = Symbol();
 export const notifSym = Symbol();
 export default defineComponent({
   components: { AuthPromp, AppSidebar, AppNotifications, AppBar },
-  setup(_, { root: { $store }, refs }) {
-    const drawer = ref(false);
-    const settings = ref(false);
+  setup(_, { refs }) {
     const authPrompt = computed(() => refs.authPromp);
     const notify = computed(() => refs.notify);
     provide(authSym, authPrompt);
     provide(notifSym, notify);
-
-    return {
-      drawer,
-      settings,
-      keluar: () => $store.dispatch('pengguna/keluar'),
-    };
   },
 });
 </script>

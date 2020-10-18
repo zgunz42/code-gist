@@ -20,7 +20,11 @@
                 >Unduh</v-btn
               ></v-col
             >
-            <v-col><v-btn color="primary" @click="login">Simpan</v-btn></v-col>
+            <v-col
+              ><v-btn color="primary" @click="ketikaTombolSimpanDiKlik"
+                >Simpan</v-btn
+              ></v-col
+            >
           </v-row>
         </v-container>
       </v-col>
@@ -69,6 +73,7 @@
 <script lang="ts">
 import { stringifyUrl } from 'query-string';
 import debounce from 'debounce-fn';
+import cleanDeep from 'clean-deep';
 import { URL_API, OPSI_STRINGIFY } from '@/constants';
 import { kirimData, unduhKode } from '@/utils';
 import {
@@ -82,7 +87,6 @@ import {
   provide,
   computed,
   nextTick,
-  triggerRef,
 } from '@vue/composition-api';
 import getOptions from '@/compositions/getOptions';
 
@@ -100,7 +104,7 @@ export default defineComponent({
     AppEditorKode: () => import('@/components/partial/AppEditorKode.vue'),
     AppEditorPreview: () => import('@/components/partial/AppEditorPreview.vue'),
   },
-  setup(_, { root: { $store } }) {
+  setup(_, { root: { $store }, emit }) {
     const scrollX = ref(0);
     const scrollY = ref(0);
     provide('scroll', { scrollX, scrollY });
@@ -204,6 +208,30 @@ export default defineComponent({
       }
     }
 
+    async function ketikaTombolSimpanDiKlik() {
+      try {
+        const konten = cleanDeep({
+          kode: state.inputKode,
+          bahasaPemrograman: state.bahasaPemrogramanTerpilih,
+          highlight: state.highlight,
+          namaBerkas: state.namaBerkas,
+          twoslash: state.twoslashTerpilih,
+        });
+        await $store.dispatch('kode/simpanKode', {
+          idPengguna: $store.state.pengguna.idPengguna,
+          konten: konten,
+        });
+        await emit('tersimpan');
+      } catch (error) {
+        const dataNotifikasiGalat = {
+          apakahTampil: true,
+          pesan: error.message || 'Gagal menyimpan',
+        };
+        $store.dispatch('notifikasi/tampilkanNotifikasi', dataNotifikasiGalat);
+        console.log(error);
+      }
+    }
+
     watch(
       toRef(state, 'inputKode'),
       debounce(
@@ -222,6 +250,7 @@ export default defineComponent({
       putMark,
       supportSlash,
       ketikaTombolUnduhDiKlik,
+      ketikaTombolSimpanDiKlik,
     };
   },
 });
