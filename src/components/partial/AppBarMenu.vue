@@ -9,17 +9,19 @@
     v-click-outside="() => (show = false)"
   >
     <a
-      class="dropdown-toggle"
+      class="dropdown-toggle d-flex block justify-center items-center"
       dropdown-toggle=""
       aria-haspopup="true"
       aria-expanded="false"
-      ><span>{{ name }}</span>
+      ><slot
+        ><span>{{ name }}</span></slot
+      >
       <v-icon v-if="hasItems" color="#a0aabf">mdi-menu-down</v-icon></a
     >
     <ul v-if="hasItems" class="dropdown dropdown-menu" role="menu">
       <li v-for="(it, index) in items" :key="index" class="ng-scope">
-        <a :href="it.link" class="text-decoration-none">
-          <span class="body-2">{{ it.label }}</span>
+        <a @click="$emit('click-items', it)" class="text-decoration-none">
+          <span class="body-2">{{ it }}</span>
         </a>
       </li>
     </ul>

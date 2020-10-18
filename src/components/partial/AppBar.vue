@@ -5,8 +5,8 @@
     <div class="mx-2">
       <div class="nav-right">
         <ul class="menu menu-utilities">
-          <li @click="showAuthDialog">
-            <app-bar-menu name="Daftar / Masuk" />
+          <li>
+            <app-bar-auth-menu />
           </li>
         </ul>
       </div>
@@ -21,18 +21,7 @@ import { authSym } from '@/layouts/PageLayout.vue';
 import { defineComponent, inject } from '@vue/composition-api';
 export default defineComponent({
   components: {
-    AppBarMenu: () => import('@/components/partial/AppBarMenu.vue'),
-  },
-  setup() {
-    const auth: any = inject(authSym);
-    return {
-      showAuthDialog: () => auth?.value.tampil(),
-    };
-  },
-  data() {
-    return {
-      overlay: false,
-    };
+    AppBarAuthMenu: () => import('@/components/partial/AppBarAuthMenu.vue'),
   },
 });
 </script>
