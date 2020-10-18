@@ -1,7 +1,7 @@
 <template>
   <v-app-bar height="51px" color="#373d49" dark app>
     <v-app-bar-nav-icon @click="$emit('click-nav')"></v-app-bar-nav-icon>
-    <v-toolbar-title>Title</v-toolbar-title>
+    <v-toolbar-title>MakeUp Formmater</v-toolbar-title>
     <v-spacer></v-spacer>
     <div class="mx-2">
       <app-bar-menu
