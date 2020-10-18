@@ -71,6 +71,7 @@ export default defineComponent<Props>({
 
     function setValue(params: string) {
       save.value = true;
+      showHint.value = false;
       emit('save', params);
     }
 
