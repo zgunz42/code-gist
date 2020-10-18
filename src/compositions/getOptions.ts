@@ -8,7 +8,7 @@ type State = {
 export default function getOptions() {
   const state = reactive<State>({
     daftarBahasaPemrograman: [],
-    daftarTwoslash: ['twoslash', 'tsconfig'],
+    daftarTwoslash: [],
   });
 
   async function dapatkanDaftarBahasaPemrograman() {
@@ -16,6 +16,7 @@ export default function getOptions() {
       const respon = await dapatkanOpsi();
       if (respon.success && !respon.error) {
         state.daftarBahasaPemrograman = respon.data.languages;
+        state.daftarTwoslash = respon.data.twoslashes;
       }
       return respon;
     } catch (error) {

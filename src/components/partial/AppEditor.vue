@@ -1,32 +1,65 @@
 <template>
-  <div class="editor-code">
-    <v-card>
-      <v-row no-gutters class="fill-height">
-        <v-col class="editor-code-container editor">
-          <div class="header">
-            <gl-text-editor>
-              <template #content>
+  <div class="container">
+    <v-row justify="space-between" align="center" class="m-12 p-4">
+      <v-col class="header">
+        <h3 class="font-weight-light text-uppercase overline">
+          DOCUMENT NAME
+        </h3>
+
+        <gl-content-editor v-model="namaBerkas">
+          <p class="font-weight-regular subtitle-1">
+            {{ namaBerkas }}
+          </p>
+        </gl-content-editor>
+      </v-col>
+      <v-col cols="auto" class="actions">
+        <v-container>
+          <v-row>
+            <v-col><v-btn color="primary">Unduh</v-btn></v-col>
+            <v-col><v-btn color="primary" @click="login">Simpan</v-btn></v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+    <div class="editor-code">
+      <v-card>
+        <v-row no-gutters class="fill-height">
+          <v-col class="editor-code-container editor">
+            <div class="header">
+              <gl-content-editor
+                :text="bahasaPemrogramanTerpilih"
+                @save="val => (bahasaPemrogramanTerpilih = val.toLowerCase())"
+              >
                 <h3 class="font-weight-light text-uppercase overline">
-                  JAVASCRIPT
+                  {{ bahasaPemrogramanTerpilih }}
                 </h3>
-              </template>
-            </gl-text-editor>
-          </div>
-          <div class="body editor">
-            <app-editor-kode v-model="inputKode" @mark="putMark" />
-          </div>
-        </v-col>
-        <v-col class="editor-code-container">
-          <div class="body fill-height pt-0">
-            <app-editor-preview
-              :inputKode="inputKode"
-              :bahasaPemrogramanTerpilih="bahasaPemrogramanTerpilih"
-              :hasilHighlight="hasilHighlight"
-            />
-          </div>
-        </v-col>
-      </v-row>
-    </v-card>
+              </gl-content-editor>
+              <v-select
+                v-if="supportSlash"
+                v-model="twoslashTerpilih"
+                :items="daftarTwoslash"
+                label="Pilih Twoslash"
+                class="editor-code-variant"
+                dense
+                solo
+              ></v-select>
+            </div>
+            <div class="body editor">
+              <app-editor-kode v-model="inputKode" @mark="putMark" />
+            </div>
+          </v-col>
+          <v-col class="editor-code-container">
+            <div class="body fill-height pt-0">
+              <app-editor-preview
+                :inputKode="inputKode"
+                :bahasaPemrogramanTerpilih="bahasaPemrogramanTerpilih"
+                :hasilHighlight="hasilHighlight"
+              />
+            </div>
+          </v-col>
+        </v-row>
+      </v-card>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -43,6 +76,9 @@ import {
   onMounted,
   ref,
   provide,
+  computed,
+  nextTick,
+  triggerRef,
 } from '@vue/composition-api';
 import getOptions from '@/compositions/getOptions';
 
@@ -67,12 +103,16 @@ export default defineComponent({
     const state = reactive<State>({
       inputKode: '',
       bahasaPemrogramanTerpilih: 'javascript',
-      namaBerkas: undefined,
+      namaBerkas: 'Untitled Document',
       highlight: undefined,
       twoslashTerpilih: undefined,
       hasilHighlight: undefined,
     });
-
+    const supportSlash = computed(
+      () =>
+        state.bahasaPemrogramanTerpilih === 'typescript' ||
+        state.bahasaPemrogramanTerpilih === 'json'
+    );
     const { load, daftarBahasaPemrograman, daftarTwoslash } = getOptions();
 
     onMounted(() => {
@@ -81,7 +121,11 @@ export default defineComponent({
       });
     });
 
-    async function highlighter(inputKode: string, download?: boolean) {
+    async function highlighter(
+      state: any,
+      inputKode: string,
+      download?: boolean
+    ) {
       try {
         $store.dispatch('proses/tampilkanProses', null);
         const objekUrl = {
@@ -90,7 +134,7 @@ export default defineComponent({
             lang: state.bahasaPemrogramanTerpilih,
             fileName: state.namaBerkas,
             highlight: state.highlight,
-            twoslash: state.twoslashTerpilih,
+            twoslash: supportSlash.value ? state.twoslashTerpilih : undefined,
             download,
           },
         };
@@ -120,16 +164,27 @@ export default defineComponent({
     function putMark(marks: number[]) {
       if (state.inputKode) {
         state.highlight = marks.join(',');
-        highlighter(state.inputKode);
       }
     }
+
+    watch(state, (nState, oldState) => {
+      if (
+        nState.bahasaPemrogramanTerpilih !== oldState.bahasaPemrogramanTerpilih
+      ) {
+        nextTick(() => (state.inputKode = ''));
+        return;
+      }
+      if (nState.inputKode === oldState.inputKode) {
+        highlighter(nState, nState.inputKode);
+      }
+    });
 
     watch(
       toRef(state, 'inputKode'),
       debounce(
         kode => {
           // state.hasilHighlight = '';
-          highlighter(kode);
+          highlighter(state, kode);
         },
         { wait: 300 }
       )
@@ -140,6 +195,7 @@ export default defineComponent({
       daftarBahasaPemrograman,
       daftarTwoslash,
       putMark,
+      supportSlash,
     };
   },
 });
@@ -172,6 +228,15 @@ export default defineComponent({
       background: #000;
       height: 100%;
     }
+  }
+}
+.editor-code-variant {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  .v-input__control {
+    height: 0;
+    max-width: 120px;
   }
 }
 </style>
