@@ -15,7 +15,11 @@
       <v-col cols="auto" class="actions">
         <v-container>
           <v-row>
-            <v-col><v-btn color="primary">Unduh</v-btn></v-col>
+            <v-col
+              ><v-btn @click="ketikaTombolUnduhDiKlik" color="primary"
+                >Unduh</v-btn
+              ></v-col
+            >
             <v-col><v-btn color="primary" @click="login">Simpan</v-btn></v-col>
           </v-row>
         </v-container>
@@ -66,7 +70,7 @@
 import { stringifyUrl } from 'query-string';
 import debounce from 'debounce-fn';
 import { URL_API, OPSI_STRINGIFY } from '@/constants';
-import { kirimData } from '@/utils';
+import { kirimData, unduhKode } from '@/utils';
 import {
   defineComponent,
   reactive,
@@ -121,24 +125,26 @@ export default defineComponent({
       });
     });
 
+    const objekUrl = (download?: number) => ({
+      url: URL_API,
+      query: {
+        lang: state.bahasaPemrogramanTerpilih,
+        fileName: state.namaBerkas,
+        highlight: state.highlight,
+        twoslash: supportSlash.value ? state.twoslashTerpilih : undefined,
+        download,
+      },
+    });
+
     async function highlighter(
       state: any,
       inputKode: string,
-      download?: boolean
+      download?: number
     ) {
       try {
         $store.dispatch('proses/tampilkanProses', null);
-        const objekUrl = {
-          url: URL_API,
-          query: {
-            lang: state.bahasaPemrogramanTerpilih,
-            fileName: state.namaBerkas,
-            highlight: state.highlight,
-            twoslash: supportSlash.value ? state.twoslashTerpilih : undefined,
-            download,
-          },
-        };
-        const url = stringifyUrl(objekUrl, OPSI_STRINGIFY);
+
+        const url = stringifyUrl(objekUrl(download), OPSI_STRINGIFY);
 
         const respon = await kirimData(url, {
           code: inputKode,
@@ -179,6 +185,25 @@ export default defineComponent({
       }
     });
 
+    async function ketikaTombolUnduhDiKlik() {
+      try {
+        $store.dispatch('proses/tampilkanProses', null);
+        const url = stringifyUrl(objekUrl(1), OPSI_STRINGIFY);
+        await unduhKode(url, {
+          code: state.inputKode,
+        });
+      } catch (error) {
+        const dataNotifikasiGalat = {
+          apakahTampil: true,
+          pesan: error.message || 'Gagal mengunduh',
+        };
+        $store.dispatch('notifikasi/tampilkanNotifikasi', dataNotifikasiGalat);
+        console.log(error);
+      } finally {
+        $store.dispatch('proses/hilangkanProses', null);
+      }
+    }
+
     watch(
       toRef(state, 'inputKode'),
       debounce(
@@ -196,6 +221,7 @@ export default defineComponent({
       daftarTwoslash,
       putMark,
       supportSlash,
+      ketikaTombolUnduhDiKlik,
     };
   },
 });
