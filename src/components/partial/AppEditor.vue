@@ -34,14 +34,15 @@
         <v-row no-gutters class="fill-height">
           <v-col class="editor-code-container editor">
             <div class="header">
-              <gl-content-editor
+              <gl-select-editor
                 :text="bahasaPemrogramanTerpilih"
+                :items="daftarBahasaPemrograman"
                 @save="val => (bahasaPemrogramanTerpilih = val.toLowerCase())"
               >
                 <h3 class="font-weight-light text-uppercase overline">
                   {{ bahasaPemrogramanTerpilih }}
                 </h3>
-              </gl-content-editor>
+              </gl-select-editor>
               <v-select
                 v-if="supportSlash"
                 v-model="twoslashTerpilih"
