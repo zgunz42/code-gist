@@ -6,6 +6,12 @@
       <div class="nav-right">
         <ul class="menu menu-utilities">
           <li>
+            <app-bar-menu to="/" name="Editor" />
+          </li>
+          <li>
+            <app-bar-menu to="/gallery" name="Gallery" />
+          </li>
+          <li>
             <app-bar-auth-menu />
           </li>
         </ul>
@@ -22,6 +28,7 @@ import { defineComponent, inject } from '@vue/composition-api';
 export default defineComponent({
   components: {
     AppBarAuthMenu: () => import('@/components/partial/AppBarAuthMenu.vue'),
+    AppBarMenu: () => import('@/components/partial/AppBarMenu.vue'),
   },
 });
 </script>

@@ -5,9 +5,16 @@
       :lang="bahasaPemrograman"
       :is-highlighted="apakahHighlightMenyala"
     />
-    <v-button v-if="idKode" @click="ketikaTombolHapusDiKlik">
-      Hapus
-    </v-button>
+    <div class="actions">
+      <v-btn
+        depressed
+        color="error"
+        v-if="idKode"
+        @click="ketikaTombolHapusDiKlik"
+      >
+        Hapus
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -51,3 +58,14 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss" scoped>
+.tampilan-kode {
+  position: relative;
+  .actions {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 4px;
+  }
+}
+</style>

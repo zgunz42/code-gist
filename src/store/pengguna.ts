@@ -109,7 +109,7 @@ const actions: ActionTree<PenggunaState, object> = {
 
 const getters: GetterTree<PenggunaState, RootState> = {
   isLogin(s) {
-    return s.idPengguna !== null;
+    return s.idPengguna && s.idPengguna !== null;
   },
 };
 

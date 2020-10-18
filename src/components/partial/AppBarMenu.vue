@@ -9,10 +9,11 @@
     v-click-outside="() => (show = false)"
   >
     <a
-      class="dropdown-toggle d-flex block justify-center items-center"
+      class="dropdown-toggle d-flex block justify-center items-center text-decoration-none"
       dropdown-toggle=""
       aria-haspopup="true"
       aria-expanded="false"
+      :href="to"
       ><slot
         ><span>{{ name }}</span></slot
       >
@@ -33,6 +34,7 @@ import { computed, defineComponent } from '@vue/composition-api';
 export default defineComponent({
   props: {
     name: { type: String, required: true },
+    to: { type: String, required: false },
     items: { type: Array, required: false, deafult: () => [] },
   },
   setup(props) {
