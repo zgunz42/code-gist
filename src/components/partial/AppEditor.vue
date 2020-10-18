@@ -4,9 +4,13 @@
       <v-row no-gutters class="fill-height">
         <v-col class="editor-code-container editor">
           <div class="header">
-            <h3 class="font-weight-light text-uppercase overline">
-              JAVASCRIPT
-            </h3>
+            <gl-text-editor>
+              <template #content>
+                <h3 class="font-weight-light text-uppercase overline">
+                  JAVASCRIPT
+                </h3>
+              </template>
+            </gl-text-editor>
           </div>
           <div class="body editor">
             <app-editor-kode v-model="inputKode" @mark="putMark" />

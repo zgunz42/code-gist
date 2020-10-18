@@ -5,7 +5,12 @@
         <h3 class="font-weight-light text-uppercase overline">
           DOCUMENT NAME
         </h3>
-        <p class="font-weight-regular subtitle-1">Untitled Document.md</p>
+
+        <gl-content-editor v-model="fileName">
+          <p class="font-weight-regular subtitle-1">
+            {{ fileName }}
+          </p>
+        </gl-content-editor>
       </v-col>
       <v-col cols="auto" class="actions">
         <v-container>
@@ -22,17 +27,18 @@
 
 <script lang="ts">
 import { authSym } from '@/layouts/PageLayout.vue';
-import { defineComponent, inject } from '@vue/composition-api';
+import { defineComponent, inject, ref } from '@vue/composition-api';
 
 export default defineComponent({
   components: {
     AppEditor: () => import('@/components/partial/AppEditor.vue'),
   },
-  setup() {
+  setup(_, { refs }) {
+    const fileName = ref('Untitled Document.md');
     const authPromp = inject<any>(authSym);
     const login = () => authPromp.value?.tampil();
 
-    return { login };
+    return { login, fileName };
   },
 });
 </script>
