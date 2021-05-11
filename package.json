@@ -17,7 +17,7 @@
     "debounce-fn": "^4.0.0",
     "escape-goat": "^3.0.0",
     "file-saver": "^2.0.2",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "query-string": "^6.13.4",
     "register-service-worker": "^1.7.1",
     "tailwindcss": "^1.8.12",
