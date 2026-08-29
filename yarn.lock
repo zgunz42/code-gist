@@ -10288,10 +10288,10 @@ vuetify-loader@^1.3.0:
     file-loader "^4.0.0"
     loader-utils "^1.2.0"
 
-vuetify@^2.2.11:
-  version "2.3.13"
-  resolved "https://registry.npm.taobao.org/vuetify/download/vuetify-2.3.13.tgz#afd5e00a1fe6a5207d3ee7f06f0bf3741b4f5f68"
-  integrity sha1-r9XgCh/mpSB9PufwbwvzdBtPX2g=
+vuetify@^3.0.0:
+  version "3.13.2"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.13.2.tgz#980d01c253a853b5d91a97e587481a7064bf76f8"
+  integrity sha512-CuBtJ2/lKo4s6vDmDr/oJ+77oRUb7X8goUhTKZG/qSqBkL5J2EzeBEhaZ57ZSLcYnnViWHObuVjHjRFmVzx55Q==
 
 vuex-class@^0.3.2:
   version "0.3.2"
